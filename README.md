@@ -1,5 +1,7 @@
 # Welcome to your Lovable project
 
+![Deploy to GitHub Pages](https://github.com/mahfuzulislam873/M873/workflows/Deploy%20to%20GitHub%20Pages/badge.svg)
+
 ## Project info
 
 **URL**: https://lovable.dev/projects/192bda2a-c510-44b8-a33f-62d1c5e03d1d
