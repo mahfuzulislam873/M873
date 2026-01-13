@@ -5,7 +5,7 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: process.env.NODE_ENV === 'production' ? '/m873-next-horizon-main/' : '/',
+  base: process.env.NODE_ENV === 'production' ? '/M873/' : '/',
   server: {
     host: "::",
     port: 8080,
