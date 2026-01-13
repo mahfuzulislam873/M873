@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import UpcomingFeature from "./pages/UpcomingFeature";
 import Profile from "./pages/Profile";
 import OwnerAuth from "./pages/OwnerAuth";
+// Frontend deployment complete
 import OwnerDashboard from "./pages/OwnerDashboard";
 import NotFound from "./pages/NotFound";
 import FloatingParticles from "./components/FloatingParticles";
