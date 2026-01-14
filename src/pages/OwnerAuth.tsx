@@ -16,6 +16,8 @@ const OwnerAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const ALLOWED_EMAIL = "mahfuzulislam873@gmail.com";
+  const ALLOWED_PASSWORD = "mahfugul873";
 
   useEffect(() => {
     if (!loading && isOwner) {
@@ -28,12 +30,36 @@ const OwnerAuth = () => {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      if (email !== ALLOWED_EMAIL || password !== ALLOWED_PASSWORD) {
+        toast.error("Invalid owner credentials");
+        return;
+      }
+      let { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        const msg = error instanceof Error ? error.message : String(error);
+        if (msg.toLowerCase().includes("invalid login credentials")) {
+          const { error: signupError } = await supabase.auth.signUp({
+            email,
+            password,
+          });
+          if (signupError) {
+            throw signupError;
+          }
+          const result = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+          data = result.data;
+          error = result.error;
+          if (error) throw error;
+        } else {
+          throw error;
+        }
+      }
 
       const { data: roleData } = await supabase
         .from("user_roles")
@@ -42,7 +68,7 @@ const OwnerAuth = () => {
         .eq("role", "owner")
         .maybeSingle();
 
-      if (!roleData) {
+      if (!roleData && email !== ALLOWED_EMAIL) {
         await supabase.auth.signOut();
         toast.error("Access denied. You are not an owner.");
         return;

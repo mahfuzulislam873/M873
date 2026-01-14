@@ -2,13 +2,13 @@ const Logo = ({ className = "w-10 h-10" }: { className?: string }) => {
   return (
     <svg
       viewBox="0 0 100 100"
-      className={`${className} animate-logo-flash`}
+      className={`${className} animate-logo-flash logo-color-cycle`}
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
         <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style={{ stopColor: "hsl(var(--primary))", stopOpacity: 1 }} />
-          <stop offset="100%" style={{ stopColor: "hsl(var(--accent))", stopOpacity: 1 }} />
+          <stop offset="0%" className="logo-stop-1" />
+          <stop offset="100%" className="logo-stop-2" />
         </linearGradient>
       </defs>
       

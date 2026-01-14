@@ -91,8 +91,9 @@ const OwnerDashboard = () => {
 
       if (rolesError) throw rolesError;
       setUserRoles(rolesData || []);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to load data");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to load data";
+      toast.error(message);
     } finally {
       setIsLoadingData(false);
     }
@@ -138,8 +139,9 @@ const OwnerDashboard = () => {
       setEditingFeature(null);
       setIsFeatureDialogOpen(false);
       fetchData();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to save feature");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to save feature";
+      toast.error(message);
     }
   };
 
@@ -151,8 +153,9 @@ const OwnerDashboard = () => {
       if (error) throw error;
       toast.success("Feature deleted!");
       fetchData();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to delete feature");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to delete feature";
+      toast.error(message);
     }
   };
 
@@ -199,8 +202,9 @@ const OwnerDashboard = () => {
         toast.success("Owner role granted");
       }
       fetchData();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to update role");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to update role";
+      toast.error(message);
     }
   };
 

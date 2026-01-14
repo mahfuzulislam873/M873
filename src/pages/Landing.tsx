@@ -33,10 +33,7 @@ const Landing = () => {
             </p>
             <h1 className="text-5xl md:text-6xl font-bold text-primary leading-tight">M873 A New Era of Intelligence</h1>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-              M873 is a modern AI platform built for creators, learners, and developers. Here, you can explore powerful AI models, practice real development, and understand how to build your own AI systems. With free APIs, interactive tools, and practical guidance, M873 makes advanced technology simple and accessible for everyone.
-            </p>
-            <p className="text-lg text-muted-foreground/80 max-w-xl mx-auto italic">
-              Step into a world where ideas turn into intelligent creations — welcome to the future with M873.
+              M873 is an easy AI platform for learning and building projects. You can explore AI, practice development, and create smart solutions with simple tools.
             </p>
           </div>
 

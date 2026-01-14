@@ -196,3 +196,27 @@ All colors MUST be HSL.
   animation: glow-pulse 2s ease-in-out infinite;
   color: hsl(266 80% 70%);
 }
+
+@keyframes logo-color-cycle-1 {
+  0% { stop-color: #ff3b30; }
+  33% { stop-color: #ffcc00; }
+  66% { stop-color: #34c759; }
+  100% { stop-color: #ff3b30; }
+}
+
+@keyframes logo-color-cycle-2 {
+  0% { stop-color: #34c759; }
+  33% { stop-color: #ff3b30; }
+  66% { stop-color: #ffcc00; }
+  100% { stop-color: #34c759; }
+}
+
+.logo-color-cycle .logo-stop-1 {
+  animation: logo-color-cycle-1 4s linear infinite;
+  stop-opacity: 1;
+}
+
+.logo-color-cycle .logo-stop-2 {
+  animation: logo-color-cycle-2 4s linear infinite;
+  stop-opacity: 1;
+}
