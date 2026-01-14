@@ -22,7 +22,7 @@ const App = () => (
       <FloatingParticles />
       <Toaster />
       <Sonner />
-      <BrowserRouter basename="/M873">
+      <BrowserRouter>
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/auth" element={<Auth />} />

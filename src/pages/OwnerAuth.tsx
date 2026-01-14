@@ -8,44 +8,20 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowLeft, Shield } from "lucide-react";
 import Logo from "@/components/Logo";
+import { useOwnerAuth } from "@/hooks/useOwnerAuth";
 
 const OwnerAuth = () => {
   const navigate = useNavigate();
+  const { isOwner, loading } = useOwnerAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   useEffect(() => {
-    const checkOwnerStatus = async (userId: string) => {
-      const { data } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", userId)
-        .eq("role", "owner")
-        .maybeSingle();
-
-      if (data) {
-        navigate("/owner/dashboard");
-      } else {
-        toast.error("Access denied. You are not an owner.");
-        await supabase.auth.signOut();
-      }
-    };
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        checkOwnerStatus(session.user.id);
-      }
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session && event === "SIGNED_IN") {
-        checkOwnerStatus(session.user.id);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+    if (!loading && isOwner) {
+      navigate("/owner/dashboard");
+    }
+  }, [isOwner, loading, navigate]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,8 +50,10 @@ const OwnerAuth = () => {
 
       toast.success("Signed in as owner!");
       navigate("/owner/dashboard");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to sign in");
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to sign in";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
