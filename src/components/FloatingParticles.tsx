@@ -16,7 +16,7 @@ const ATTRACTION_RADIUS = 400;
 const ATTRACTION_STRENGTH = 0.25;
 const REPULSION_RADIUS = 300;
 const REPULSION_STRENGTH = 10;
-const RETURN_STRENGTH = 0.01;
+const RETURN_STRENGTH = 0.08; // Increased from 0.01 to 0.08 for faster return
 
 const FloatingParticles = () => {
   const [particles, setParticles] = useState<Particle[]>([]);
@@ -47,6 +47,8 @@ const FloatingParticles = () => {
 
     const handleMouseLeave = () => {
       mousePos.current = { x: -1000, y: -1000 };
+      // Force immediate return to home positions when mouse leaves window
+      clickTime.current = 0; // Reset click time to stop repulsion
     };
 
     const handleMouseDown = () => {
@@ -77,7 +79,17 @@ const FloatingParticles = () => {
           const dy = mousePos.current.y - y;
           const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance > 0) {
+          // Check if mouse is far away (mouse left the screen or is at default position)
+          const isMouseFarAway = mousePos.current.x === -1000 && mousePos.current.y === -1000;
+          const isMouseOutsideRadius = distance > ATTRACTION_RADIUS;
+
+          if (isMouseFarAway || isMouseOutsideRadius) {
+            // Return to home position when cursor is far away or left the screen
+            const homeDx = particle.homeX - x;
+            const homeDy = particle.homeY - y;
+            vx += homeDx * RETURN_STRENGTH;
+            vy += homeDy * RETURN_STRENGTH;
+          } else if (distance > 0) {
             if (isRepelling && distance < REPULSION_RADIUS) {
               // Repel on click
               const force = (REPULSION_RADIUS - distance) / REPULSION_RADIUS;
@@ -88,28 +100,34 @@ const FloatingParticles = () => {
               const force = (ATTRACTION_RADIUS - distance) / ATTRACTION_RADIUS;
               vx += (dx / distance) * force * ATTRACTION_STRENGTH;
               vy += (dy / distance) * force * ATTRACTION_STRENGTH;
-            } else {
-              // Return to home position when cursor is far away
-              const homeDx = particle.homeX - x;
-              const homeDy = particle.homeY - y;
-              vx += homeDx * RETURN_STRENGTH;
-              vy += homeDy * RETURN_STRENGTH;
             }
-          } else {
-            // Return to home position when cursor is not detected
-            const homeDx = particle.homeX - x;
-            const homeDy = particle.homeY - y;
-            vx += homeDx * RETURN_STRENGTH;
-            vy += homeDy * RETURN_STRENGTH;
           }
 
-          // Apply friction
-          vx *= 0.94;
-          vy *= 0.94;
+          // Apply stronger friction when returning home to stop movement faster
+          const isReturningHome = isMouseFarAway || isMouseOutsideRadius;
+          const friction = isReturningHome ? 0.85 : 0.94;
+          vx *= friction;
+          vy *= friction;
 
           // Update position
           x += vx;
           y += vy;
+
+          // Snap to home position when very close and velocity is low (prevents endless micro-movements)
+          if (isReturningHome) {
+            const homeDx = particle.homeX - x;
+            const homeDy = particle.homeY - y;
+            const homeDistance = Math.sqrt(homeDx * homeDx + homeDy * homeDy);
+            const speed = Math.sqrt(vx * vx + vy * vy);
+            
+            if (homeDistance < 5 && speed < 0.5) {
+              // Snap to exact home position and stop movement
+              x = particle.homeX;
+              y = particle.homeY;
+              vx = 0;
+              vy = 0;
+            }
+          }
 
           // Soft bounds - wrap around edges
           if (x < -20) x = window.innerWidth + 20;
