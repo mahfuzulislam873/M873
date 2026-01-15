@@ -28,10 +28,10 @@ const Landing = () => {
       <main className="container mx-auto px-6 py-20">
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <div className="space-y-4">
-            <p className="text-sm md:text-base font-medium tracking-wider uppercase glow-text">
+            <p className="text-sm md:text-base font-medium tracking-wider uppercase text-black">
               Welcome to M873
             </p>
-            <h1 className="text-5xl md:text-6xl font-bold text-primary leading-tight">M873 A New Era of Intelligence</h1>
+            <h1 className="text-5xl md:text-6xl font-bold text-primary leading-tight">M873 SIMPLE AI SOLUTIONS</h1>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
               M873 is an easy AI platform for learning and building projects. You can explore AI, practice development, and create smart solutions with simple tools.
             </p>
