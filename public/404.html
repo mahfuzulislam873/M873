@@ -18,14 +18,13 @@
       // to handle client-side routing correctly
       
       // Configuration for your specific repository
-      // pathSegmentsToKeep = 0 means: keep 0 path segments (for root access)
-      // This is correct for https://username.github.io/repository-name/
+      // pathSegmentsToKeep = 1 means: keep 1 path segment (for /M873/ access)
       var pathSegmentsToKeep = 1;
       
       var l = window.location;
       
       // Check if we're already in the redirect format to avoid infinite loops
-      if (l.search.indexOf('?/') !== 0) {
+      if (l.search.indexOf('?/') !== 0 && l.pathname !== '/' && l.pathname !== '/M873/' && l.pathname !== '/M873') {
         l.replace(
           l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
           l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
