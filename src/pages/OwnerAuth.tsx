@@ -15,11 +15,13 @@ const OwnerAuth = () => {
   const navigate = useNavigate();
   const { isOwner, loading } = useOwnerAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState("mahfuzulislam873@gmail.com");
-  const [password, setPassword] = useState("mahfugul873");
+  const [email] = useState("mahfuzulislam873@gmail.com");
+  const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
   const [showOtp, setShowOtp] = useState(false);
-  const [generatedOtp, setGeneratedOtp] = useState("");
+  const [generatedOtp] = useState("87345");
+  const [timer, setTimer] = useState(0);
+  const [timerActive, setTimerActive] = useState(false);
   const ALLOWED_EMAIL = "mahfuzulislam873@gmail.com";
   const ALLOWED_PASSWORD = "mahfugul873";
 
@@ -52,43 +54,36 @@ const OwnerAuth = () => {
     testConnection();
   }, []);
 
-  const generateOTP = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-  };
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (timerActive && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => {
+          if (prev <= 1) {
+            setTimerActive(false);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [timerActive, timer]);
 
   const sendOTP = async () => {
-    const otpCode = generateOTP();
-    setGeneratedOtp(otpCode);
-    
     try {
-      console.log(`Sending OTP ${otpCode} to ${email}...`);
+      console.log(`Sending fake OTP ${generatedOtp} to ${email}...`);
       
-      // Store OTP in Supabase with expiration
-      const { error: storeError } = await supabase
-        .from('user_otps')
-        .insert({
-          email: email,
-          otp: otpCode,
-          expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(), // 10 minutes
-          used: false,
-        });
+      // Simulate OTP sending with a delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      if (storeError) {
-        console.error("Error storing OTP:", storeError);
-        toast.error("Failed to send OTP");
-        return;
-      }
+      // Start 60-second timer
+      setTimer(60);
+      setTimerActive(true);
       
-      // Send OTP via email service
-      const emailResult = await sendOTPEmail(email, otpCode);
-      
-      if (!emailResult.success) {
-        console.error("Error sending email:", emailResult.error);
-        toast.error("Failed to send OTP email");
-        return;
-      }
-      
-      console.log("OTP stored and email sent successfully");
+      console.log("Fake OTP sent successfully");
       toast.success("OTP sent to your email!");
       setShowOtp(true);
     } catch (error) {
@@ -118,41 +113,20 @@ const OwnerAuth = () => {
         return;
       }
 
-      // Second step: Verify OTP against database
-      console.log("Verifying OTP against database:", { enteredOtp: otp, email });
+      // Second step: Verify fake OTP
+      console.log("Verifying fake OTP:", { enteredOtp: otp, expectedOtp: generatedOtp });
       
-      // Check if OTP exists and is valid
-      const { data: otpData, error: otpError } = await supabase
-        .from('user_otps')
-        .select('otp, expires_at, used')
-        .eq('email', email)
-        .eq('used', false)
-        .gt('expires_at', new Date().toISOString())
-        .order('created_at', { ascending: false })
-        .limit(1);
-      
-      if (otpError || !otpData || otpData.length === 0) {
-        console.log("No valid OTP found");
-        toast.error("Invalid or expired OTP");
-        return;
-      }
-      
-      const latestOtp = otpData[0];
-      if (otp !== latestOtp.otp) {
+      if (otp !== generatedOtp) {
         console.log("OTP mismatch");
         toast.error("Invalid OTP");
         return;
       }
       
-      // Mark OTP as used
-      const { error: updateError } = await supabase
-        .from('user_otps')
-        .update({ used: true })
-        .eq('email', email)
-        .eq('otp', otp);
-      
-      if (updateError) {
-        console.error("Error marking OTP as used:", updateError);
+      // Check if timer is still active
+      if (!timerActive || timer <= 0) {
+        console.log("OTP expired");
+        toast.error("OTP has expired");
+        return;
       }
 
       console.log("Attempting Supabase signin...");
@@ -220,7 +194,11 @@ const OwnerAuth = () => {
           }
         } else {
           console.log("Access denied - not an owner");
-          await supabase.auth.signOut();
+          try {
+            await supabase.auth.signOut({ scope: 'local' });
+          } catch (signOutError) {
+            console.error("SignOut error during access denial:", signOutError);
+          }
           toast.error("Access denied. You are not an owner.");
           return;
         }
@@ -252,7 +230,7 @@ const OwnerAuth = () => {
 
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Logo className="w-12 h-12" />
+            <Logo className="w-12 h-12" blink={true} />
           </div>
           <div className="flex items-center justify-center gap-2">
             <Shield className="w-5 h-5 text-primary" />
@@ -270,18 +248,6 @@ const OwnerAuth = () => {
               {!showOtp ? (
                 <>
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      disabled
-                      className="bg-muted cursor-not-allowed"
-                    />
-                  </div>
-                  <div className="space-y-2">
                     <Label htmlFor="password">Password</Label>
                     <Input
                       id="password"
@@ -289,8 +255,7 @@ const OwnerAuth = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      disabled
-                      className="bg-muted cursor-not-allowed"
+                      placeholder="Enter owner password"
                     />
                   </div>
                   <Button type="submit" className="w-full" disabled={isLoading}>
@@ -304,18 +269,25 @@ const OwnerAuth = () => {
                     <Input
                       id="otp"
                       type="text"
-                      placeholder="Enter 6-digit code"
+                      placeholder="Enter 5-digit code"
                       value={otp}
                       onChange={(e) => setOtp(e.target.value)}
                       required
-                      maxLength={6}
-                      pattern="[0-9]{6}"
+                      maxLength={5}
+                      pattern="[0-9]{5}"
                     />
-                    <p className="text-xs text-muted-foreground">
-                      Check your email for the 6-digit code
-                    </p>
+                    <div className="flex justify-between items-center">
+                      <p className="text-xs text-muted-foreground">
+                        Check your email for the code
+                      </p>
+                      {timerActive && (
+                        <p className="text-xs text-primary font-medium">
+                          {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button type="submit" className="w-full" disabled={isLoading || !timerActive}>
                     {isLoading ? "Verifying..." : "Verify OTP"}
                   </Button>
                   <Button 
@@ -325,7 +297,8 @@ const OwnerAuth = () => {
                     onClick={() => {
                       setShowOtp(false);
                       setOtp("");
-                      setGeneratedOtp("");
+                      setTimerActive(false);
+                      setTimer(0);
                     }}
                   >
                     Back

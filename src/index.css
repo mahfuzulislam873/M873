@@ -8,7 +8,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 0 0% 98%;
     --foreground: 265 4% 12.9%;
 
     --card: 0 0% 100%;
@@ -278,6 +278,22 @@ All colors MUST be HSL.
 @keyframes logo-pulse-ocean {
   0%, 100% { stop-color: #1e90ff; }
   50% { stop-color: #00bfff; }
+}
+
+/* Blinking animation for logos */
+@keyframes logo-blink {
+  0%, 90%, 100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  95% {
+    opacity: 0.3;
+    filter: brightness(0.5);
+  }
+}
+
+.logo-blink {
+  animation: logo-blink 1.5s ease-in-out infinite;
 }
 
 .logo-animated-gold .logo-stop-1,

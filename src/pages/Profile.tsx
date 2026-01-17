@@ -29,12 +29,18 @@ const Profile = () => {
 
   const handleLogout = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      const { error } = await supabase.auth.signOut({ scope: 'local' });
+      if (error) {
+        console.error('SignOut error:', error);
+        throw error;
+      }
       toast.success("Logged out successfully");
       navigate("/");
     } catch (error) {
+      console.error('Logout error:', error);
       toast.error(error instanceof Error ? error.message : "Failed to log out");
+      // Force navigation even if signOut fails
+      navigate("/");
     }
   };
 

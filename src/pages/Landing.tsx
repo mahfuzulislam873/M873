@@ -124,7 +124,7 @@ const Landing = () => {
       <header className="border-b border-border/50 backdrop-blur-sm bg-background/80 sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between bg-secondary-foreground">
           <div className="flex items-center gap-3">
-            <Logo className="w-10 h-10" colorMode="rainbow" />
+            <Logo className="w-10 h-10" colorMode="rainbow" blink={true} />
             <span className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">M873</span>
           </div>
           <div className="flex gap-3">
@@ -226,7 +226,7 @@ const Landing = () => {
                           <div className={`flex items-start gap-2 max-w-xs ${message.role === "user" ? "flex-row-reverse" : ""}`}>
                             <div className={`w-6 h-6 rounded-full flex items-center justify-center ${message.role === "user" ? "bg-primary" : "bg-muted"}`}>
                               {message.role === "user" ? (
-                                <User className="w-4 h-4 text-primary-foreground" />
+                                <User className="w-3 h-3 text-primary-foreground" />
                               ) : (
                                 <Logo className="w-4 h-4" />
                               )}
@@ -310,7 +310,7 @@ const Landing = () => {
       <footer className="border-t border-border/50 mt-20">
         <div className="container mx-auto px-6 py-8 text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <Logo className="w-6 h-6" />
+            <Logo className="w-6 h-6" blink={true} />
             <span className="text-sm text-muted-foreground">M873</span>
           </div>
           <p className="text-sm text-muted-foreground">

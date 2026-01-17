@@ -1,4 +1,4 @@
-const Logo = ({ className = "w-10 h-10", colorMode = "gradient" }: { className?: string, colorMode?: "gradient" | "rainbow" | "blue" | "red" | "green" | "purple" | "gold" | "silver" | "neon" | "fire" | "ocean" | "animated-gold" | "animated-silver" | "animated-neon" | "animated-fire" | "animated-ocean" }) => {
+const Logo = ({ className = "w-10 h-10", colorMode = "gradient", blink = false }: { className?: string, colorMode?: "gradient" | "rainbow" | "blue" | "red" | "green" | "purple" | "gold" | "silver" | "neon" | "fire" | "ocean" | "animated-gold" | "animated-silver" | "animated-neon" | "animated-fire" | "animated-ocean", blink?: boolean }) => {
   const getGradientStops = () => {
     switch (colorMode) {
       case "rainbow":
@@ -79,8 +79,8 @@ const Logo = ({ className = "w-10 h-10", colorMode = "gradient" }: { className?:
       default:
         return (
           <>
-            <stop offset="0%" style={{ stopColor: "hsl(var(--primary))", stopOpacity: 1 }} />
-            <stop offset="100%" style={{ stopColor: "hsl(var(--accent))", stopOpacity: 1 }} />
+            <stop offset="0%" style={{ stopColor: "#ffd700", stopOpacity: 1 }} />
+            <stop offset="100%" style={{ stopColor: "#ffb347", stopOpacity: 1 }} />
           </>
         );
     }
@@ -99,7 +99,7 @@ const Logo = ({ className = "w-10 h-10", colorMode = "gradient" }: { className?:
       case "purple":
         return "#8b5cf6";
       default:
-        return "url(#logoGradient)";
+        return "#ffd700";
     }
   };
 
@@ -116,7 +116,7 @@ const Logo = ({ className = "w-10 h-10", colorMode = "gradient" }: { className?:
       case "purple":
         return "#8b5cf6";
       default:
-        return "url(#logoGradient)";
+        return "#ffd700";
     }
   };
 
@@ -131,7 +131,7 @@ const Logo = ({ className = "w-10 h-10", colorMode = "gradient" }: { className?:
          colorMode === "animated-fire" ? "logo-animated-fire" :
          colorMode === "animated-ocean" ? "logo-animated-ocean" :
          colorMode === "neon" ? "logo-neon" : ""
-       }`}
+       } ${blink ? "logo-blink" : ""}`}
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>

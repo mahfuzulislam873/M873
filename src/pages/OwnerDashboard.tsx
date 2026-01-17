@@ -240,15 +240,24 @@ const OwnerDashboard = () => {
   };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate("/");
+    try {
+      const { error } = await supabase.auth.signOut({ scope: 'local' });
+      if (error) {
+        console.error('SignOut error:', error);
+      }
+    } catch (error) {
+      console.error('SignOut error:', error);
+    } finally {
+      // Always navigate regardless of signOut result
+      navigate("/");
+    }
   };
 
   if (loading || isLoadingData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 flex items-center justify-center">
         <div className="text-center">
-          <Logo className="w-16 h-16 mx-auto mb-4" colorMode="animated-fire" />
+          <Logo className="w-16 h-16 mx-auto mb-4" colorMode="animated-fire" blink={true} />
           <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
@@ -274,7 +283,7 @@ const OwnerDashboard = () => {
               >
                 <ArrowLeft className="w-4 h-4" />
               </Button>
-              <Logo className="w-8 h-8" colorMode="animated-fire" />
+              <Logo className="w-8 h-8" colorMode="animated-fire" blink={true} />
               <div className="flex items-center gap-2">
                 <Shield className="w-5 h-5 text-primary" />
                 <span className="text-lg font-bold text-white">Owner Dashboard</span>

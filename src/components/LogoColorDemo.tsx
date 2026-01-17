@@ -45,7 +45,7 @@ const LogoColorDemo = () => {
           <h2 className="text-xl font-semibold mb-4">Usage Example</h2>
           <div className="bg-muted p-4 rounded-md">
             <code className="text-sm">
-              {`<Logo colorMode="rainbow" className="w-10 h-10" />`}
+              {`<Logo colorMode="rainbow" className="w-10 h-10" blink={true} />`}
             </code>
           </div>
           <p className="mt-2 text-muted-foreground">
